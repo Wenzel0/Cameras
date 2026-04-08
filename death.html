@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Death</title>
+
+<style>
+body, html {
+    margin: 0;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: 'Courier New', monospace; /* Terminal font */
+    color: white;
+    scale: 100%;
+}
+
+/* GAME CONTAINER (SAME AS YOUR GAME) */
+#gameContainer {
+    width: 1280px;
+    height: 1280px;
+
+    background: black;
+    position: relative;
+    top: 0; left: 0; bottom: 0; right: 0;
+    overflow: hidden;
+}
+
+/* VIDEO */
+#deathVideo {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+</style>
+</head>
+
+<body>
+
+<div id="gameContainer">
+    <video id="deathVideo" autoplay>
+        <source src="Assets/Videos/DeathScreen.mp4" type="video/mp4">
+    </video>
+</div>
+
+<script>
+const deathVideo = document.getElementById("deathVideo");
+
+// Ensure it plays (browser safety)
+deathVideo.volume = 1;
+
+deathVideo.onended = () => {
+    window.location.href = "Menu.html";
+};
+</script>
+
+</body>
+</html>

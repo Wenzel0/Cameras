@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="Assets/Lock.css">
+<meta charset="UTF-8">
+<title>Menu</title>
+<style>
+/* Basic Reset */
+body, html {
+    margin: 0;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: 'Courier New', monospace; /* Terminal font */
+    color: white;
+    scale: 90%;
+}
+
+body {
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+/* Game Container */
+#gameContainer {
+    width: 1280px;
+    height: 1280px;
+    position: relative;
+
+
+    overflow: hidden;
+}
+
+/* Background cycling images with blur and creepy effect */
+.bgImage {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(5px) brightness(0.5) contrast(1.2);
+    z-index: 0; /* make sure it's behind overlays */
+}
+
+/* Vignette overlay */
+#vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.8) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Flicker dark overlay */
+#flickerOverlay {
+    position: absolute;
+    inset: 0;
+    background: black;
+    opacity: 0.05;
+    pointer-events: none;
+    animation: flicker 0.1s infinite alternate;
+    z-index: 2;
+}
+
+@keyframes flicker {
+    0% { opacity: 0.02; }
+    50% { opacity: 0.08; }
+    100% { opacity: 0.03; }
+}
+
+/* Title */
+#title {
+    position: absolute;
+    top: 500px;
+    text-align: center;
+    width: 100%;
+    font-size: 120px;
+    font-family: 'Courier New', monospace;
+    color: #fffcfc;
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px red, 0 0 40px white, 0 0 60px black;
+    z-index: 3;
+}
+
+/* New Game Button */
+#newGameBtn {
+    position: absolute;
+    bottom: 500px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 20px 50px;
+    font-size: 36px;
+    cursor: pointer;
+    background: transparent; /* removed bg */
+    border: none; /* removed border */
+    color: #fffcfc;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+    text-shadow: 0 0 5px red, 0 0 10px black;
+    transition: all 0.3s;
+    z-index: 3;
+}
+
+#newGameBtn:hover {
+    color: red;
+    text-shadow: 0 0 20px red, 0 0 40px black;
+}
+
+/* Pitch black overlay + First Night text */
+#blackOverlay {
+    position: absolute;
+    inset: 0;
+    background: black;
+    display: none;
+    z-index: 10;
+}
+
+#firstNightText {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 50%;
+    font-size: 80px;
+    color: #fffcfc;
+    transform: translateY(-50%);
+    opacity: 0;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 3px;
+    text-shadow: 0 0 10px red, 0 0 20px black;
+    transition: opacity 3s ease;
+    z-index: 11;
+}
+
+/* Footer texts */
+#footerRight, #footerLeft {
+    position: absolute;
+    bottom: 10px;
+    font-size: 16px;
+    font-family: 'Courier New', monospace;
+    color: #cccccc;
+    text-shadow: 0 0 5px black;
+    z-index: 4; /* make sure above overlays but below blackOverlay */
+}
+
+#footerRight {
+    right: 10px;
+}
+
+#footerLeft {
+    left: 10px;
+}
+</style>
+</head>
+<body>
+
+<div id="gameContainer">
+<!-- Footer texts -->
+<div id="footerRight">Made by ItzWenzel - 2026</div>
+<div id="footerLeft">0.1v</div>
+    <!-- Background image -->
+    <img src="Assets/Images/camera/cam1.png" class="bgImage" id="bgImage">
+
+    <!-- Overlays -->
+    <div id="vignette"></div>
+    <div id="flickerOverlay"></div>
+
+    <!-- Title and button -->
+    <div id="title">CAMERAS</div>
+    <button id="newGameBtn">New Game</button>
+
+    <!-- Black overlay + First Night -->
+    <div id="blackOverlay">
+        <div id="firstNightText">First Night</div>
+    </div>
+</div>
+
+<!-- Background music -->
+<audio id="bgMusic" src="Assets/Music/StuckThroughtSurveillance.ogg" loop autoplay></audio>
+
+<script>
+const bgImages = [
+    "Assets/Images/camera/cam1.png",
+    "Assets/Images/camera/cam2.png",
+    "Assets/Images/camera/cam3.png",
+    "Assets/Images/camera/cam4.png"
+];
+let currentIndex = 0;
+const bgImageElem = document.getElementById("bgImage");
+
+// Cycle backgrounds every 1 second
+setInterval(() => {
+    currentIndex = (currentIndex + 1) % bgImages.length;
+    bgImageElem.src = bgImages[currentIndex];
+}, 1000);
+
+// New Game Button Logic
+const newGameBtn = document.getElementById("newGameBtn");
+const blackOverlay = document.getElementById("blackOverlay");
+const firstNightText = document.getElementById("firstNightText");
+
+newGameBtn.onclick = () => {
+    const bgMusic = document.getElementById("bgMusic");
+
+    // Properly stop the music
+    bgMusic.pause();            // stop playback
+    bgMusic.removeAttribute("loop"); // remove looping
+    bgMusic.currentTime = 0;    // reset to start
+    bgMusic.src = "";            // remove source so it cannot restart
+
+    blackOverlay.style.display = "block";
+
+    // Show "First Night" text after 3 seconds
+    setTimeout(() => {
+        firstNightText.style.opacity = 1;
+
+        // Fade out after 3 seconds
+        setTimeout(() => {
+            firstNightText.style.opacity = 0;
+
+            // Redirect after fade
+            setTimeout(() => {
+                window.location.href = "Act1Demo.html";
+            }, 3000);
+        }, 3000);
+    }, 3000);
+};
+
+// Ensure bg music plays on first interaction if browser blocks autoplay
+document.body.addEventListener('click', () => {
+    const bgMusic = document.getElementById("bgMusic");
+    if (bgMusic.paused) bgMusic.play();
+});
+</script>
+
+</body>
+</html>
